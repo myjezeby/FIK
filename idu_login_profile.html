@@ -1,0 +1,81 @@
+<html>
+<head>
+
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+	<style>
+	</style>
+
+	<script>
+	let token = ''
+
+	function login() {
+		
+			const formData = new FormData();
+			let login = document.getElementById("login").value;
+			let password = document.getElementById("password").value;
+			
+			formData.append('login', login);
+			formData.append('password', password );
+			
+			axios
+				.post('https://s35.idu.edu.pl/api/v2/auth/login',formData)
+				.then(
+					response => {
+						token = response.data.token;
+						const elem = document.getElementById("token");
+						elem.innerHTML = `token: ${token}`
+						profile();
+					}, 
+					error => {
+						token = ''; 
+						const elem = document.getElementById("token");
+						elem.innerHTML = "Błąd logowania: "+error
+					}
+				)
+		}	
+
+		function profile() {
+				axios
+					.get('https://s35.idu.edu.pl/api/v2/user/profile', { headers: { 'X-API-TOKEN': token } })
+					.then(
+						response => {
+							const profile = response.data.data;
+							const elem = document.getElementById("profile");
+							
+							var str = JSON.stringify(profile);
+							elem.innerHTML = `profile: ${str}`
+
+						}, 
+						error => {
+							console.log("Błąd pobierania danych");
+							const elem = document.getElementById("profile");
+							elem.innerHTML = "Błąd pobierania danych: "+error
+						}
+					)
+			}		
+
+	</script>
+
+</head>
+
+<body>
+
+	<h2>Logowanie do IDU:</h2>
+	<div>
+        login: <input type="text" id="login" value=""><br>
+        password: <input type="password" id="password" value=""><br>
+        <button onclick="login()">Login</button><br>
+    </div>
+	
+	<br><br>
+
+	Token:
+	<div id="token"></div><br>
+
+	Profile:
+	<div id="profile"></div><br>
+
+</body>
+
+</html>
