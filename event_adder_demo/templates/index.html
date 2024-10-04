@@ -33,5 +33,18 @@
         <input type="text" name="content" id="content">
         <input type="submit" value="Add Event">    
     </form>
+    <form action="/submit" method="POST">
+        <label for="user_input">Enter a username:</label>
+        <input type="text" id="user_input" name="user_input">
+        <input type="submit" value="Submit">
+    </form>
+    <table>
+        {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
 </div>
 {% endblock %}
