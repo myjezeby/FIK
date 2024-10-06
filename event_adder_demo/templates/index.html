@@ -2,6 +2,7 @@
 
 {% block head %}
 <title>Fik Event Manager</title>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -34,17 +35,113 @@
         <input type="submit" value="Add Event">    
     </form>
     <form action="/submit" method="POST">
-        <label for="user_input">Enter a username:</label>
-        <input type="text" id="user_input" name="user_input">
-        <input type="submit" value="Submit">
+        <button id="submit_button">Take part in event</button>
     </form>
     <table>
         {% for user in users %}
         <tr>
             <td>{{ user.name }}</td>
+            <td>
+                <a href="/delete_user/{{user.id}}">Delete</a>
+            </td>
+
         </tr>
         {% endfor %}
     </table>
+
+    <!-- Logging to idu and sending the profile info to backend code -->
+    <script>
+        let token = ''
+       
+        function login() {
+         
+          const formData = new FormData();
+          let login = document.getElementById("login").value;
+          let password = document.getElementById("password").value;
+          
+          formData.append('login', login);
+          formData.append('password', password );
+          
+          axios
+           .post('https://s35.idu.edu.pl/api/v2/auth/login',formData)
+           .then(
+            response => {
+             token = response.data.token;
+             const elem = document.getElementById("token");
+             elem.innerHTML = `token: ${token}`
+             profile();
+            }, 
+            error => {
+             token = ''; 
+             const elem = document.getElementById("token");
+             elem.innerHTML = "Błąd logowania: "+error
+            }
+           )
+         } 
+       
+        function profile() {
+           axios
+            .get('https://s35.idu.edu.pl/api/v2/user/profile', { headers: { 'X-API-TOKEN': token } })
+            .then(                       
+             response => {
+              const profile = response.data.data;
+              const elem = document.getElementById("profile");
+              console.log(profile);
+              var str = JSON.stringify(profile);
+              elem.innerHTML = `profile: ${str}`
+              
+              // Sending the data to the server
+              // I put it here because it wouldnt work in another function idk why
+              const profile_data = profile;
+              fetch('/profile_process', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({profile_data: profile_data})
+                })
+              .then(response => response.text())
+              .then(result => {
+                  console.log(result);
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+              });  
+
+              send_data(profile);
+             }, 
+             error => {
+              console.log("Błąd pobierania danych");
+              const elem = document.getElementById("profile");
+              elem.innerHTML = "Błąd pobierania danych: "+error
+             }
+            )
+
+
+          }  
+        </script>
+       
+        <h2>Logowanie do IDU:</h2>
+        <div>
+               login: <input type="text" id="login" value=""><br>
+               password: <input type="password" id="password" value=""><br>
+               <button onclick="login()">Login</button><br>
+           </div>
+           
+        <br><br>
+       
+        Token:
+        <div id="token"></div><br>
+       
+        Profile:
+        <div id="profile"></div><br>
+       
+        <form action="/role_permission/" method="POST">
+            <input type="text" name="role_name" id="role_name">
+            <input type="submit" value="Add role permission">    
+        </form>
+
+
 
 </div>
 {% endblock %}
