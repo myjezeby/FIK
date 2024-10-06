@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/">
+  <link rel="stylesheet" href="styles/login_styles.css">
+  <title>Fik login</title>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">
+      <img  src="images/FIK_logo.svg">
+      <p class="desc">Festiwal intelektualnych korzyści</p>
+    </div>
+    <div class="login-password">
+        <input type="text" id="login" placeholder="Login"><br>
+        <input type="password" id="password" placeholder="Password"><br>
+        <button onclick="login()">Login</button>
+    </div>
+    <div class="learn-more">Dowiedz sie wiecej</div>
+    <div id="token"></div>
+    <div id="profile"></div>
+  </div>
+   <!-- error -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
